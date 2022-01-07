@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  react_app:
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      dockerfile: Dockerfile
+      context: .
+      # command: > bash -c " npm init && npx create-react-app mon-app && 
+      #             cd mon-app && 
+      #             npm start"
+    ports:
+      - "8003:3000"
+    volumes:
+      - .:/app
+    networks:
+      - microservices-network-docker
+
+networks:
+  microservices-network-docker:
+    external:
+      name: microservices-network-docker

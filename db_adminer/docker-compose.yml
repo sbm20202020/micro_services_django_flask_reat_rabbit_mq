@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  adminer:
+    image: adminer
+    container_name: database_adminer
+    ports:
+      - 1215:8080
+    networks:
+      - microservices-network-docker
+#     networks:
+#       microservices-network-docker: 
+#         ipv4_address: "10.10.0.11"
+networks:
+  microservices-network-docker:
+    external:
+      name: microservices-network-docker

@@ -1,0 +1,57 @@
+version: "3.7"
+
+services:
+  mainflask:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: 'python main.py'
+    ports:
+      - "8001:5000"
+    volumes:
+      - .:/app
+    networks:
+      microservices-network-docker: 
+        ipv4_address: "10.10.0.100"
+    depends_on:
+      - db_main
+
+  queue:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: 'python consumer.py'
+    volumes:
+      - .:/queue
+    depends_on:
+      - db_main
+    # networks:
+    #   - microservices-network-docker
+    networks:
+      microservices-network-docker: 
+        ipv4_address: "10.10.0.101"
+  db_main:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db_main'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3302:3306'
+    expose:
+      # Opens port 3307 on the container
+      - '3302'
+    networks:
+      microservices-network-docker: 
+        ipv4_address: "10.10.0.102"
+    volumes:
+      - my-db-main-mysql:/var/lib/mysql
+# Names our volume
+volumes:
+  my-db-main-mysql: null
+networks:
+  microservices-network-docker:
+    external:
+      name: microservices-network-docker
